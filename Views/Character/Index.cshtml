@@ -1,0 +1,23 @@
+﻿@model IEnumerable<MarvelArchive.Models.Character>
+
+<h1>Marvel Characters</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Hero Name</th>
+            <th>Real Name</th>
+            <th>Image</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var character in Model)
+        {
+            <tr>
+                <td>@character.HeroName</td>
+                <td>@character.RealName</td>
+                <td><img src="@character.ImageURL" width="80"/></td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -10,12 +10,24 @@ namespace MarvelArchive.Models
         [Required]
         public string RealName { get; set; } = string.Empty;
         [Required]
+        public string Aliases {  get; set; } = string.Empty;
+        [Required]
+        public string PlaceOfBirth {  get; set; } = string.Empty;
+        [Required]
+        public string Gender {  get; set; } = string.Empty;
+        [Required]
+        public string Race {  get; set; } = string.Empty;
+        [Required]
         public string Description { get; set; } = string.Empty;
         [Required]
         public string Alignment { get; set; } = string.Empty;
+        public int Intelligence { get; set; }
+        public int Strength { get; set; }
+        public int Speed { get; set; }
+        public int Durability { get; set; }
+        public int Power { get; set; }
+        public int Combat { get; set; }
         [Required]
-        public string[] Powers { get; set; } = Array.Empty<string>();
         public string? ImageURL { get; set; }
-        public ICollection<Movie> Movies { get; set; } = new List<Movie>();
     }
 }

@@ -1,4 +1,5 @@
 using MarvelArchive.Data;
+using MarvelArchive.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +19,12 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddHttpClient<SuperheroApiService>(client =>
+{
+    client.BaseAddress = new Uri(
+        $"https://superheroapi.com/api/{builder.Configuration["SuperHeroApi:AccessToken"]}/");
+});
 
 var app = builder.Build();
 
