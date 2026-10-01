@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Humanizer;
+using System.ComponentModel.DataAnnotations;
 
 namespace MarvelArchive.Models
 {
@@ -10,13 +11,13 @@ namespace MarvelArchive.Models
         [Required]
         public string RealName { get; set; } = string.Empty;
         [Required]
-        public string Aliases {  get; set; } = string.Empty;
+        public string Aliases { get; set; } = string.Empty;
         [Required]
-        public string PlaceOfBirth {  get; set; } = string.Empty;
+        public string PlaceOfBirth { get; set; } = string.Empty;
         [Required]
-        public string Gender {  get; set; } = string.Empty;
+        public string Gender { get; set; } = string.Empty;
         [Required]
-        public string Race {  get; set; } = string.Empty;
+        public string Race { get; set; } = string.Empty;
         [Required]
         public string Description { get; set; } = string.Empty;
         [Required]
@@ -27,7 +28,29 @@ namespace MarvelArchive.Models
         public int Durability { get; set; }
         public int Power { get; set; }
         public int Combat { get; set; }
+        public string? publisher { get; set; }
         [Required]
         public string? ImageURL { get; set; }
+
+
+        public string GetAlignmentValue()
+        {
+            if (Alignment == "good")
+            {
+                return "Hero";
+            }
+            else if (Alignment == "bad")
+            {
+                return "Villain";
+            }
+            else if (Alignment == "-")
+            {
+                return "Unknown";
+            } 
+            else
+            {
+                return Alignment.ApplyCase(LetterCasing.Title);
+            }
+        }
     }
 }

@@ -1,23 +1,51 @@
 ﻿@model IEnumerable<MarvelArchive.Models.Character>
 
 <h1>Marvel Characters</h1>
+<br />
 
-<table>
+<label>Search: </label>
+<input type="text" id="search" placeholder="Enter Name of Character" />
+
+<br /><br />
+
+<table id="characterTable">
     <thead>
         <tr>
             <th>Hero Name</th>
             <th>Real Name</th>
-            <th>Image</th>
+            <th>Alignment</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody id="characterList">
         @foreach (var character in Model)
         {
             <tr>
-                <td>@character.HeroName</td>
+                <td><a asp-controller="Character" asp-action="Details" asp-route-id="@character.Id">@character.HeroName</a></td>
                 <td>@character.RealName</td>
-                <td><img src="@character.ImageURL" width="80"/></td>
+                <td>@character.GetAlignmentValue()</td>
             </tr>
         }
     </tbody>
 </table>
+
+<script>
+    const searchBox = document.getElementById("search");
+    const characterList = document.getElementById("characterList");
+    const characterRows = characterList.querySelectorAll("tr");
+
+    searchBox.addEventListener("input", function() {
+
+        const searchTerm = searchBox.value.toLowerCase();
+
+        for (const row of characterRows) {
+
+            const rowText = row.textContent.toLowerCase();
+
+            if (rowText.includes(searchTerm)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        }
+    });
+</script>
