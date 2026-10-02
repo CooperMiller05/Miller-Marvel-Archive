@@ -4,7 +4,14 @@
 <br />
 
 <label>Search: </label>
-<input type="text" id="search" placeholder="Enter Name of Character" />
+<input type="text" id="search" placeholder="Search Archive" />
+
+<br /><br />
+
+@if (User.IsInRole("Admin"))
+{
+    <a asp-action="Create">+ Create New</a>
+}
 
 <br /><br />
 
@@ -13,16 +20,28 @@
         <tr>
             <th>Hero Name</th>
             <th>Real Name</th>
+            <th>Aliases</th>
             <th>Alignment</th>
+            <th></th>
         </tr>
     </thead>
     <tbody id="characterList">
         @foreach (var character in Model)
         {
             <tr>
-                <td><a asp-controller="Character" asp-action="Details" asp-route-id="@character.Id">@character.HeroName</a></td>
+                <td><a asp-action="Details" asp-route-id="@character.Id">@character.HeroName</a></td>
                 <td>@character.RealName</td>
+                <td>@character.Aliases</td>
                 <td>@character.GetAlignmentValue()</td>
+                @if (User.IsInRole("Admin"))
+                {
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@character.Id">Edit</a>
+                    </td>
+                    <td>
+                        <a asp-action="Delete" asp-route-id="@character.Id">Delete</a>
+                    </td>
+                }
             </tr>
         }
     </tbody>

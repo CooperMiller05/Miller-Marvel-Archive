@@ -1,7 +1,141 @@
 ﻿@model MarvelArchive.Models.Character
 
 <h1>@Model.HeroName</h1>
+
 <br />
+<hr />
+<br />
+
+<h3>Identity</h3>
+<br />
+<label>Real Name:</label>
 <p>@Model.RealName</p>
 <br />
+<label>Aliases:</label>
+<p>@Model.Aliases</p>
+<br />
+<label>Gender:</label>
+<p>@Model.Gender</p>
+<br />
+<label>Race:</label>
+<p>@Model.Race</p>
+<br />
+<label>Place of Origin:</label>
+<p>@Model.PlaceOfOrigin</p>
+<br />
+<label>Alignment:</label>
 <p>@Model.GetAlignmentValue()</p>
+
+<br />
+<hr />
+<br />
+
+<h3>Description</h3>
+<br />
+<p>@Model.Description</p>
+
+<br />
+<hr />
+<br />
+
+<h3>Power Stats</h3>
+<br />
+<label>Intelligence</label>
+<div style="width: 200px;">
+    <canvas id="intelligenceChart"></canvas>
+</div>
+
+<label>Strength</label>
+<div style="width: 200px;">
+    <canvas id="strengthChart"></canvas>
+</div>
+
+<label>Speed</label>
+<div style="width: 200px;">
+    <canvas id="speedChart"></canvas>
+</div>
+
+<label>Durability</label>
+<div style="width: 200px;">
+    <canvas id="durabilityChart"></canvas>
+</div>
+
+<label>Power</label>
+<div style="width: 200px;">
+    <canvas id="powerChart"></canvas>
+</div>
+
+<label>Combat</label>
+<div style="width: 200px;">
+    <canvas id="combatChart"></canvas>
+</div>
+<br /><br />
+
+@if (User.IsInRole("Admin"))
+{
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+    <a asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
+}
+
+<a asp-action="Index">Back to List</a>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    function createCenterText(value) {
+        return {
+            id: "centerText",
+
+            beforeDraw(chart) {
+                const { ctx } = chart;
+
+                ctx.save();
+
+                ctx.font = "bold 30px Arial";
+                ctx.fillStyle = "black";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+
+                ctx.fillText(
+                    value,
+                    chart.getDatasetMeta(0).data[0].x,
+                    chart.getDatasetMeta(0).data[0].y
+                );
+
+                ctx.restore();
+            }
+        };
+    }
+
+    function createStatChart(canvasId, value, color) {
+        const remaining = 100 - value;
+        const canvas = document.getElementById(canvasId);
+
+        new Chart(canvas, {
+        type: "doughnut",
+
+        data: {
+            datasets: [{
+                data: [remaining, value],
+                backgroundColor: ["lightgray", color]
+            }]
+        },
+        plugins: [createCenterText(value)],
+
+        options: {
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+    }
+
+    createStatChart("intelligenceChart", @Model.Intelligence, "blue");
+    createStatChart("strengthChart", @Model.Strength, "red");
+    createStatChart("speedChart", @Model.Speed, "green");
+    createStatChart("durabilityChart", @Model.Durability, "orange");
+    createStatChart("powerChart", @Model.Power, "purple");
+    createStatChart("combatChart", @Model.Combat, "yellow");
+</script>

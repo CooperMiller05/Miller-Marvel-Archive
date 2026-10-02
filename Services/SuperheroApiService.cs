@@ -80,7 +80,7 @@ namespace MarvelArchive.Services
                 var aliasList = aliases.EnumerateArray().Select(aliases => aliases.GetString());
                 character.Aliases = string.Join(", ", aliasList);
 
-                character.PlaceOfBirth = document.RootElement.GetProperty("biography").GetProperty("place-of-birth").GetString();
+                character.PlaceOfOrigin = document.RootElement.GetProperty("biography").GetProperty("place-of-birth").GetString();
                 character.Gender = document.RootElement.GetProperty("appearance").GetProperty("gender").GetString();
                 character.Race = document.RootElement.GetProperty("appearance").GetProperty("race").GetString();
                 character.Alignment = document.RootElement.GetProperty("biography").GetProperty("alignment").GetString();
@@ -90,7 +90,7 @@ namespace MarvelArchive.Services
                 character.Durability = ParsePowerstat(document.RootElement.GetProperty("powerstats").GetProperty("durability").GetString());
                 character.Power = ParsePowerstat(document.RootElement.GetProperty("powerstats").GetProperty("power").GetString());
                 character.Combat = ParsePowerstat(document.RootElement.GetProperty("powerstats").GetProperty("combat").GetString());
-                character.publisher = document.RootElement.GetProperty("biography").GetProperty("publisher").GetString();
+                character.Publisher = document.RootElement.GetProperty("biography").GetProperty("publisher").GetString();
                 character.ImageURL = document.RootElement.GetProperty("image").GetProperty("url").GetString();
 
                 return character;

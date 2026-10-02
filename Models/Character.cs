@@ -13,7 +13,7 @@ namespace MarvelArchive.Models
         [Required]
         public string Aliases { get; set; } = string.Empty;
         [Required]
-        public string PlaceOfBirth { get; set; } = string.Empty;
+        public string PlaceOfOrigin { get; set; } = string.Empty;
         [Required]
         public string Gender { get; set; } = string.Empty;
         [Required]
@@ -28,7 +28,7 @@ namespace MarvelArchive.Models
         public int Durability { get; set; }
         public int Power { get; set; }
         public int Combat { get; set; }
-        public string? publisher { get; set; }
+        public string? Publisher { get; set; }
         [Required]
         public string? ImageURL { get; set; }
 

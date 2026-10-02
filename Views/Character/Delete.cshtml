@@ -1,0 +1,9 @@
+﻿@model MarvelArchive.Models.Character
+
+<h3>Are you sure you want to delete @Model.HeroName?</h3>
+
+<form asp-action="Delete" method="post">
+    <button type="submit">Delete</button>
+</form>
+
+<a asp-action="Details" asp-route-id="@Model.Id">Cancel</a>

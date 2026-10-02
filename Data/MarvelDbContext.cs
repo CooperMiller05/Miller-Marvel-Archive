@@ -10,7 +10,8 @@ namespace MarvelArchive.Data
         }
 
         public DbSet<Character> Characters { get; set; }
-        public DbSet<Movie> Movies { get; set; }
+
+        public DbSet<Media> Media { get; set; }
 
     }
 }

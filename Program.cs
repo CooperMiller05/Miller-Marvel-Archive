@@ -14,7 +14,7 @@ builder.Services.AddDbContext<MarvelDbContext>(options => options.UseSqlServer(c
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false).AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddControllersWithViews();
 
@@ -22,6 +22,12 @@ builder.Services.AddHttpClient<SuperheroApiService>(client =>
 {
     client.BaseAddress = new Uri(
         $"https://superheroapi.com/api/{builder.Configuration["SuperHeroApi:AccessToken"]}/");
+});
+
+builder.Services.AddHttpClient<MCUTimelineApiService>(client =>
+{
+    client.BaseAddress = new Uri(
+        $"https://tools.tornevall.net/api/mcu/");
 });
 
 var app = builder.Build();

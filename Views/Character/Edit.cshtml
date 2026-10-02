@@ -1,0 +1,57 @@
+﻿@model MarvelArchive.Models.Character
+
+<h1>@Model.HeroName</h1>
+<br />
+<form asp-action="Edit" method="post">
+
+    <label>Hero/Villain Name:</label>
+    <input asp-for="HeroName" />
+    <br />
+    <label>Real Name:</label>
+    <input asp-for="RealName" />
+    <br />
+    <label>Aliases:</label>
+    <input asp-for="Aliases" />
+    <br />
+    <label>Place of Birth:</label>
+    <input asp-for="PlaceOfOrigin" />
+    <br />
+    <label>Gender:</label>
+    <input asp-for="Gender" />
+    <br />
+    <label>Race:</label>
+    <input asp-for="Race" />
+    <br />
+    <label>Alignment:</label>
+    <input asp-for="Alignment" />
+    <br />
+    <label>Description:</label>
+    <textarea asp-for="Description"></textarea>
+    <br />
+    <hr />
+    <br />
+    <h3>Power Stats</h3>
+    <br />
+    <label>Intelligence:</label>
+    <input asp-for="Intelligence" />
+    <br />
+    <label>Strength:</label>
+    <input asp-for="Strength" />
+    <br />
+    <label>Speed:</label>
+    <input asp-for="Speed" />
+    <br />
+    <label>Durability:</label>
+    <input asp-for="Durability" />
+    <br />
+    <label>Power:</label>
+    <input asp-for="Power" />
+    <br />
+    <label>Combat:</label>
+    <input asp-for="Combat" />
+    <br />
+    <button type="submit">Save</button>
+
+</form>
+
+<a asp-action="Index">Cancel</a>
