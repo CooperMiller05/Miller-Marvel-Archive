@@ -31,7 +31,8 @@ namespace MarvelArchive.Models
         public string? Publisher { get; set; }
         [Required]
         public string? ImageURL { get; set; }
-
+        [Required]
+        public bool IsVisible { get; set; } = true;
 
         public string GetAlignmentValue()
         {

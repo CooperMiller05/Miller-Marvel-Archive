@@ -4,6 +4,7 @@ using MarvelArchive.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MarvelArchive.Migrations
 {
     [DbContext(typeof(MarvelDbContext))]
-    partial class MarvelDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261003163857_ChangeOfMediaAPI")]
+    partial class ChangeOfMediaAPI
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,9 +66,6 @@ namespace MarvelArchive.Migrations
                     b.Property<int>("Intelligence")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsVisible")
-                        .HasColumnType("bit");
-
                     b.Property<string>("PlaceOfOrigin")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -103,31 +103,31 @@ namespace MarvelArchive.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<long?>("BoxOffice")
+                    b.Property<long>("BoxOffice")
                         .HasColumnType("bigint");
 
                     b.Property<int?>("Chronology")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Director")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("Duration")
+                    b.Property<int>("Duration")
                         .HasColumnType("int");
 
                     b.Property<int?>("Episodes")
                         .HasColumnType("int");
 
                     b.Property<string>("ImageUrl")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsMCU")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsVisible")
                         .HasColumnType("bit");
 
                     b.Property<string>("MultiverseDesignation")
@@ -136,7 +136,7 @@ namespace MarvelArchive.Migrations
                     b.Property<int?>("Phase")
                         .HasColumnType("int");
 
-                    b.Property<DateOnly?>("ReleaseDate")
+                    b.Property<DateOnly>("ReleaseDate")
                         .HasColumnType("date");
 
                     b.Property<string>("Saga")
@@ -154,6 +154,7 @@ namespace MarvelArchive.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TrailerUrl")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Type")

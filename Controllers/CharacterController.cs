@@ -133,7 +133,8 @@ namespace MarvelArchive.Controllers
             return RedirectToAction("Details", new { id = character.Id });
         }
 
-        /* public async Task<IActionResult> ImportCharacters()
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ImportCharacters()
         {
             for (int id = 1; id <= 731; id++)
             {
@@ -152,6 +153,6 @@ namespace MarvelArchive.Controllers
             await _context.SaveChangesAsync();
 
             return Ok("import complete");
-        } */
+        }
     }
 }

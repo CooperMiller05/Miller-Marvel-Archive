@@ -24,10 +24,10 @@ builder.Services.AddHttpClient<SuperheroApiService>(client =>
         $"https://superheroapi.com/api/{builder.Configuration["SuperHeroApi:AccessToken"]}/");
 });
 
-builder.Services.AddHttpClient<MCUTimelineApiService>(client =>
+builder.Services.AddHttpClient<MCUApiService>(client =>
 {
     client.BaseAddress = new Uri(
-        $"https://tools.tornevall.net/api/mcu/");
+        $"https://mcuapi.up.railway.app/api/v1/");
 });
 
 var app = builder.Build();

@@ -4,6 +4,7 @@ using MarvelArchive.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MarvelArchive.Migrations
 {
     [DbContext(typeof(MarvelDbContext))]
-    partial class MarvelDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261003184520_EditMediaModel")]
+    partial class EditMediaModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,9 +65,6 @@ namespace MarvelArchive.Migrations
 
                     b.Property<int>("Intelligence")
                         .HasColumnType("int");
-
-                    b.Property<bool>("IsVisible")
-                        .HasColumnType("bit");
 
                     b.Property<string>("PlaceOfOrigin")
                         .IsRequired()
@@ -125,9 +125,6 @@ namespace MarvelArchive.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsMCU")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsVisible")
                         .HasColumnType("bit");
 
                     b.Property<string>("MultiverseDesignation")
