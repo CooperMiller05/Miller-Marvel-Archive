@@ -28,21 +28,24 @@
     <tbody id="characterList">
         @foreach (var character in Model)
         {
-            <tr>
-                <td><a asp-action="Details" asp-route-id="@character.Id">@character.HeroName</a></td>
-                <td>@character.RealName</td>
-                <td>@character.Aliases</td>
-                <td>@character.GetAlignmentValue()</td>
-                @if (User.IsInRole("Admin"))
-                {
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@character.Id">Edit</a>
-                    </td>
-                    <td>
-                        <a asp-action="Delete" asp-route-id="@character.Id">Delete</a>
-                    </td>
-                }
-            </tr>
+            @if ((User.IsInRole("Admin")) || character.IsVisible)
+            {
+                <tr>
+                    <td><a asp-action="Details" asp-route-id="@character.Id">@character.HeroName</a></td>
+                    <td>@character.RealName</td>
+                    <td>@character.Aliases</td>
+                    <td>@character.GetAlignmentValue()</td>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@character.Id">Edit</a>
+                        </td>
+                        <td>
+                            <a asp-action="Delete" asp-route-id="@character.Id">Delete</a>
+                        </td>
+                    }
+                </tr>
+            }
         }
     </tbody>
 </table>

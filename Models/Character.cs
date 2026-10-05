@@ -34,6 +34,8 @@ namespace MarvelArchive.Models
         [Required]
         public bool IsVisible { get; set; } = true;
 
+        public ICollection<CharacterMedia> CharacterMedia { get; set; } = new List<CharacterMedia>();
+
         public string GetAlignmentValue()
         {
             if (Alignment == "good")

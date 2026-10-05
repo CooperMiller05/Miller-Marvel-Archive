@@ -1,0 +1,28 @@
+﻿@model MarvelArchive.Models.Media
+
+<p><i>@Model.Type</i></p>
+<br />
+<h1>@Model.Title</h1>
+<br />
+<p>@Model.ReleaseDate | @Model.Duration m</p>
+<br />
+
+<img src="@Model.ImageUrl" width="200" />
+
+<br />
+
+<h3>Description:</h3>
+<br />
+<p>@Model.Description</p>
+<br />
+<h3>Director:</h3>
+<p>@Model.Director</p>
+<br />
+
+@if (User.IsInRole("Admin"))
+{
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+    <a asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
+}
+
+<a asp-action="Index">Back to List</a>

@@ -18,9 +18,122 @@ namespace MarvelArchive.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
+        {
+            var media = await _context.Media.ToListAsync();
+
+            if (!User.IsInRole("Admin"))
+            {
+                media = media.Where(m => m.IsVisible).ToList();
+            }
+
+            return View(media);
+        }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var media = await _context.Media.FirstOrDefaultAsync(m => m.Id == id);
+
+            if (media == null)
+            {
+                return NotFound();
+            }
+
+            if (!media.IsVisible && !User.IsInRole("Admin"))
+            {
+                return NotFound();
+            }
+
+            return View(media);
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var media = await _context.Media.FirstOrDefaultAsync(m => m.Id == id);
+
+            if (media == null)
+            {
+                return NotFound();
+            }
+
+            return View(media);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> Edit (Media media)
+        {
+            var existingMedia = await _context.Media.FirstOrDefaultAsync(m => m.Id == media.Id);
+
+            if (existingMedia == null)
+            {
+                return NotFound();
+            }
+
+            existingMedia.Type = media.Type;
+            existingMedia.Title = media.Title;
+            existingMedia.ReleaseDate = media.ReleaseDate;
+            existingMedia.BoxOffice = media.BoxOffice;
+            existingMedia.Duration = media.Duration;
+            existingMedia.Description = media.Description;
+            existingMedia.ImageUrl = media.ImageUrl;
+            existingMedia.TrailerUrl = media.TrailerUrl;
+            existingMedia.Director = media.Director;
+            media.Phase = media.Phase;
+            existingMedia.Saga = media.Saga;
+            existingMedia.Chronology = media.Chronology;
+            existingMedia.Studio = media.Studio;
+            existingMedia.MultiverseDesignation = media.MultiverseDesignation;
+            existingMedia.IsMCU = media.IsMCU;
+            existingMedia.Season = media.Season;
+            existingMedia.Episodes = media.Episodes;
+            existingMedia.IsVisible = media.IsVisible;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", new { id = media.Id });
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete (int id)
+        {
+            var media = await _context.Media.FirstOrDefaultAsync(m => m.Id == id);
+
+            return View(media);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> Delete (Media media)
+        {
+            var existingMedia = await _context.Media.FirstOrDefaultAsync(m => m.Id == media.Id);
+
+            if (existingMedia == null)
+            {
+                return NotFound();
+            }
+
+            _context.Media.Remove(existingMedia);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult Create ()
         {
             return View();
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> Create (Media media)
+        {
+            _context.Media.Add(media);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", new { id = media.Id });
         }
 
         [Authorize(Roles = "Admin")]

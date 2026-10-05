@@ -95,6 +95,21 @@ namespace MarvelArchive.Migrations
                     b.ToTable("Characters");
                 });
 
+            modelBuilder.Entity("MarvelArchive.Models.CharacterMedia", b =>
+                {
+                    b.Property<int>("CharacterId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MediaId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CharacterId", "MediaId");
+
+                    b.HasIndex("MediaId");
+
+                    b.ToTable("CharacterMedia");
+                });
+
             modelBuilder.Entity("MarvelArchive.Models.Media", b =>
                 {
                     b.Property<int>("Id")
@@ -163,6 +178,35 @@ namespace MarvelArchive.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Media");
+                });
+
+            modelBuilder.Entity("MarvelArchive.Models.CharacterMedia", b =>
+                {
+                    b.HasOne("MarvelArchive.Models.Character", "Character")
+                        .WithMany("CharacterMedia")
+                        .HasForeignKey("CharacterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MarvelArchive.Models.Media", "Media")
+                        .WithMany("CharacterMedia")
+                        .HasForeignKey("MediaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Character");
+
+                    b.Navigation("Media");
+                });
+
+            modelBuilder.Entity("MarvelArchive.Models.Character", b =>
+                {
+                    b.Navigation("CharacterMedia");
+                });
+
+            modelBuilder.Entity("MarvelArchive.Models.Media", b =>
+                {
+                    b.Navigation("CharacterMedia");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,0 +1,41 @@
+﻿@model IEnumerable<MarvelArchive.Models.Media>
+
+<h1>Marvel Movies/TV Shows</h1>
+<br />
+
+@if (User.IsInRole("Admin"))
+{
+    <a asp-action="Create">+ Create New</a>
+}
+
+<br />
+<br />
+
+<table>
+    <thead>
+        <tr>
+            <th>Movie Name</th>
+            <th>Description</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var media in Model)
+        {
+            @if ((User.IsInRole("Admin")) || media.IsVisible)
+            {
+                <tr>
+                    <td><a asp-action="Details" asp-route-id="@media.Id">@media.Title</a></td>
+                    <td>@media.Description</td>
+                    <td>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@media.Id">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@media.Id">Delete</a>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

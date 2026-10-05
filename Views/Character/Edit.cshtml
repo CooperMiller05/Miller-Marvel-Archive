@@ -4,7 +4,7 @@
 <br />
 <form asp-action="Edit" method="post">
 
-    <label>Hero/Villain Name:</label>
+    <label>Character:</label>
     <input asp-for="HeroName" />
     <br />
     <label>Real Name:</label>
@@ -49,6 +49,9 @@
     <br />
     <label>Combat:</label>
     <input asp-for="Combat" />
+    <br />
+    <label>Do you want to make this visible?</label>
+    <input asp-for="IsVisible" />
     <br />
     <button type="submit">Save</button>
 

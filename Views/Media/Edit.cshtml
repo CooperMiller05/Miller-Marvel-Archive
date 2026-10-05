@@ -1,0 +1,64 @@
+﻿@model MarvelArchive.Models.Media
+
+<h1>@Model.Title</h1>
+<br />
+
+<form asp-action="Edit" method="post">
+    <label>Title:</label>
+    <input asp-for="Title" />
+    <br />
+    <label>Description:</label>
+    <textarea asp-for="Description"></textarea>
+    <br />
+    <label>Type:</label>
+    <input asp-for="Type" />
+    <br />
+    <label>Release Date:</label>
+    <input asp-for="ReleaseDate" />
+    <br />
+    <label>Box Office:</label>
+    <input asp-for="BoxOffice" />
+    <br />
+    <label>Duration:</label>
+    <input asp-for="Duration" />
+    <br />
+    <label>Image URL:</label>
+    <input asp-for="ImageUrl" />
+    <br />
+    <label>Trailer URL:</label>
+    <input asp-for="TrailerUrl" />
+    <br />
+    <label>Director:</label>
+    <input asp-for="Director" />
+    <br />
+    <label>Phase:</label>
+    <input asp-for="Phase" />
+    <br />
+    <label>Saga:</label>
+    <input asp-for="Saga" />
+    <br />
+    <label>Chronology:</label>
+    <input asp-for="Chronology" />
+    <br />
+    <label>Studio:</label>
+    <input asp-for="Studio" />
+    <br />
+    <label>Multiverse Designation</label>
+    <input asp-for="MultiverseDesignation" />
+    <br />
+    <label>Is this an MCU Movie/TV Show?</label>
+    <input asp-for="IsMCU" />
+    <br />
+    <label>Season:</label>
+    <input asp-for="Season" />
+    <br />
+    <label>Episodes:</label>
+    <input asp-for="Episodes" />
+    <br />
+    <label>Do you want to make this visible?</label>
+    <input asp-for="IsVisible" />
+    <br /><br />
+    <button type="submit">Save</button>
+</form>
+
+    <a asp-action="Index">Cancel</a>

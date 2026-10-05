@@ -13,5 +13,11 @@ namespace MarvelArchive.Data
 
         public DbSet<Media> Media { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<CharacterMedia>().HasKey(cm => new { cm.CharacterId, cm.MediaId });
+        }
     }
 }
