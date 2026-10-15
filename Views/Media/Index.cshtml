@@ -3,15 +3,19 @@
 <h1>Marvel Movies/TV Shows</h1>
 <br />
 
+<label>Search: </label>
+<input type="text" id="search" placeholder="Search Archive" />
+
+<br /><br />
+
 @if (User.IsInRole("Admin"))
 {
     <a asp-action="Create">+ Create New</a>
 }
 
-<br />
-<br />
+<br /><br />
 
-<table>
+<table id="mediaTable">
     <thead>
         <tr>
             <th>Movie Name</th>
@@ -19,7 +23,7 @@
             <th></th>
         </tr>
     </thead>
-    <tbody>
+    <tbody id="mediaList">
         @foreach (var media in Model)
         {
             @if ((User.IsInRole("Admin")) || media.IsVisible)
@@ -39,3 +43,25 @@
         }
     </tbody>
 </table>
+
+<script>
+    const searchBox = document.getElementById("search");
+    const mediaList = document.getElementById("mediaList");
+    const mediaRows = mediaList.querySelectorAll("tr");
+
+    searchBox.addEventListener("input", function() {
+
+        const searchTerm = searchBox.value.toLowerCase();
+
+        for (const row of mediaRows) {
+
+            const rowText = row.textContent.toLowerCase();
+
+            if (rowText.includes(searchTerm)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        }
+    });
+</script>
