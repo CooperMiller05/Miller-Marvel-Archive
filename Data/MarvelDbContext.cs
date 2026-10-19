@@ -19,5 +19,7 @@ namespace MarvelArchive.Data
 
             modelBuilder.Entity<CharacterMedia>().HasKey(cm => new { cm.CharacterId, cm.MediaId });
         }
+
+        public DbSet<CharacterMedia> CharacterMedia { get; set; }
     }
 }

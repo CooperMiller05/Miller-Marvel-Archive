@@ -79,6 +79,27 @@
 
 <a asp-action="Index">Back to List</a>
 
+<h3>Media Appearances</h3>
+
+@if (Model.CharacterMedia.Any())
+{
+    <ul>
+        @foreach (var cm in Model.CharacterMedia)
+        {
+            <div>
+                <img src="@cm.Media.ImageUrl" width="200"/>
+                <br />
+                <p>@cm.Media.Title</p>
+            </div>
+        }
+    </ul>
+}
+else
+{
+    <p>No Movie/TV Show Appearances</p>
+}
+
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>

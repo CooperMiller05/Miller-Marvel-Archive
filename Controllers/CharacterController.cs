@@ -10,12 +10,14 @@ namespace MarvelArchive.Controllers
 {
     public class CharacterController : Controller
     {
-        private readonly SuperheroApiService _apiService;
+        private readonly SuperheroApiService _superheroApiService;
+        private readonly MCUApiService _mcuApiService;
         private readonly MarvelDbContext _context;
 
-        public CharacterController(SuperheroApiService apiService, MarvelDbContext context)
+        public CharacterController(SuperheroApiService superheroApiService, MCUApiService mcuApiService, MarvelDbContext context)
         {
-            _apiService = apiService;
+            _superheroApiService = superheroApiService;
+            _mcuApiService = mcuApiService;
             _context = context;
         }
 
@@ -31,9 +33,14 @@ namespace MarvelArchive.Controllers
             return View(characters);
         }
 
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(int? id)
         {
-            var character = await _context.Characters.FirstOrDefaultAsync(c => c.Id == id);
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var character = await _context.Characters.Include(c => c.CharacterMedia).ThenInclude(cm => cm.Media).FirstOrDefaultAsync(c => c.Id == id);
 
             if (character == null)
             {
@@ -135,11 +142,33 @@ namespace MarvelArchive.Controllers
         }
 
         [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ImportSuperheroCharacters()
+        {
+            for (int id = 1; id <= 731; id++)
+            {
+                var character = await _superheroApiService.GetCharacterAsync(id);
+
+                if (character != null)
+                {
+                    var exists = await _context.Characters.AnyAsync(c => c.HeroName == character.HeroName);
+
+                    if (exists == false)
+                    {
+                        _context.Characters.Add(character);
+                    }
+                }
+            }
+            await _context.SaveChangesAsync();
+
+            return Ok("import complete");
+        }
+
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ImportCharacters()
         {
             for (int id = 1; id <= 731; id++)
             {
-                var character = await _apiService.GetCharacterAsync(id);
+                var character = await _superheroApiService.GetCharacterAsync(id);
 
                 if (character != null)
                 {
