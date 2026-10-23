@@ -1,0 +1,35 @@
+﻿@model MarvelArchive.Models.CharacterMedia
+
+<h1>Add Connection</h1>
+
+<br />
+<hr />
+<br />
+
+<form asp-action="AddConnection" method="post">
+    <label>Character:</label>
+    <select name="CharacterId" class="form-select">
+        <option value="">-- Select a Character --</option>
+
+        @foreach (var character in ViewBag.Characters)
+        {
+            <option value="@character.Id" selected="@(ViewBag.SelectedCharacterId == character.Id)">@character.HeroName</option>
+        }
+    </select>
+
+    <br />
+    <br />
+
+    <label>Media:</label>
+    <select name="MediaId" class="form-select">
+        <option value="">-- Select a Movie/TV Show --</option>
+
+        @foreach (var media in ViewBag.Media)
+        {
+            <option value="@media.Id" selected="@(ViewBag.SelectedMediaId == media.Id)">@media.Title</option>
+        }
+    </select>
+
+
+    <button type="submit">Create</button>
+</form>
