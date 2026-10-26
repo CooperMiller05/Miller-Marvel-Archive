@@ -21,16 +21,45 @@ namespace MarvelArchive.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? search, string alignment = "all", string sort = "atoz")
         {
-            var characters = await _context.Characters.ToListAsync();
+            var query = _context.Characters.AsQueryable();
 
             if (!User.IsInRole("Admin"))
             {
-                characters = characters.Where(c => c.IsVisible).ToList();
+                query = query.Where(c => c.IsVisible);
             }
 
-            return View(characters);
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                string term = search.Trim();
+
+                query = query.Where(c => c.HeroName.Contains(term) || (c.RealName != null && c.RealName.Contains(term)) || (c.Aliases != null && c.Aliases.Contains(term)));
+            }
+
+            if (alignment == "good")
+            {
+                query = query.Where(c => c.Alignment == "good");
+            } else if (alignment == "bad")
+            {
+                query = query.Where(c => c.Alignment == "bad");
+            }
+
+            if (sort == "ztoa")
+            {
+                query = query.OrderByDescending(c => c.HeroName);
+            } else
+            {
+                query = query.OrderBy(c => c.HeroName);
+            }
+
+            ViewBag.Search = search;
+            ViewBag.Alignment = alignment;
+            ViewBag.Sort = sort;
+
+            var characters = await query.ToListAsync();
+
+                return View(characters);
         }
 
         public async Task<IActionResult> Details(int? id)

@@ -3,8 +3,46 @@
 <h1>Marvel Characters</h1>
 <br />
 
-<label>Search: </label>
-<input type="text" id="search" placeholder="Search Archive" />
+<form asp-action="Index">
+    <label>Search:</label>
+
+    <br />
+
+    <input type="search" id="search" name="search" value="@ViewBag.Search" placeholder="Search Characters" />
+    <button type="submit">Search</button>
+
+    <br />
+
+    <label>Alignment:</label>
+    <select id="alignment" name="alignment">
+        <option value="all"
+                selected="@(ViewBag.Alignment == "all" ? "selected" : null)">
+            All Alignments
+        </option>
+        <option value="good"
+                selected="@(ViewBag.Alignment == "good" ? "selected" : null)">
+            Super Heroes
+        </option>
+        <option value="bad"
+                selected="@(ViewBag.Alignment == "bad" ? "selected" : null)">
+            Villains
+        </option>
+    </select>
+
+    <br />
+
+    <label>Sort:</label>
+    <select id="sort" name="sort" class="form-select">
+        <option value="atoz"
+                selected="@(ViewBag.SortOrder == "atoz" ? "selected" : null)">
+            A - Z
+        </option>
+        <option value="ztoa"
+                selected="@(ViewBag.SortOrder == "ztoa" ? "selected" : null)">
+            Z - A
+        </option>
+    </select>
+</form>
 
 <br /><br />
 
@@ -50,7 +88,7 @@
     </tbody>
 </table>
 
-<script>
+@*<script>
     const searchBox = document.getElementById("search");
     const characterList = document.getElementById("characterList");
     const characterRows = characterList.querySelectorAll("tr");
@@ -70,4 +108,8 @@
             }
         }
     });
-</script>
+
+    const searchAlignment = document.getElementById("searchAlignment");
+    const sort = document.getElementById("sort");
+
+</script>*@
