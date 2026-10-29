@@ -3,6 +3,7 @@ using MarvelArchive.Models;
 using MarvelArchive.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 
@@ -21,9 +22,12 @@ namespace MarvelArchive.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index(string? search, string alignment = "all", string sort = "atoz")
+        public async Task<IActionResult> Index(string? search, string alignment = "all", string sort = "atoz", int page  = 1)
         {
-            var query = _context.Characters.AsQueryable();
+            page = Math.Max(1, page);
+            const int pageSize = 25;
+
+            var query = _context.Characters.AsNoTracking();
 
             if (!User.IsInRole("Admin"))
             {
@@ -32,9 +36,9 @@ namespace MarvelArchive.Controllers
 
             if (!string.IsNullOrWhiteSpace(search))
             {
-                string term = search.Trim();
+                search = search.Trim();
 
-                query = query.Where(c => c.HeroName.Contains(term) || (c.RealName != null && c.RealName.Contains(term)) || (c.Aliases != null && c.Aliases.Contains(term)));
+                query = query.Where(c => c.HeroName.Contains(search) || (c.RealName != null && c.RealName.Contains(search)) || (c.Aliases != null && c.Aliases.Contains(search)));
             }
 
             if (alignment == "good")
@@ -53,13 +57,17 @@ namespace MarvelArchive.Controllers
                 query = query.OrderBy(c => c.HeroName);
             }
 
+            int totalCharacters = await query.CountAsync();
+
+            var characters = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+
             ViewBag.Search = search;
             ViewBag.Alignment = alignment;
             ViewBag.Sort = sort;
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = (int)Math.Ceiling(totalCharacters / (double)pageSize);
 
-            var characters = await query.ToListAsync();
-
-                return View(characters);
+            return View(characters);
         }
 
         public async Task<IActionResult> Details(int? id)
