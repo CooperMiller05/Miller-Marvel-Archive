@@ -21,5 +21,9 @@ namespace MarvelArchive.Data
         }
 
         public DbSet<CharacterMedia> CharacterMedia { get; set; }
+
+        public DbSet<Collection> Collections { get; set; }
+
+        public DbSet<CollectionItem> CollectionItems { get; set; }
     }
 }

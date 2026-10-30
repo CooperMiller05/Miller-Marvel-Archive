@@ -1,0 +1,23 @@
+﻿@model IEnumerable<MarvelArchive.Models.Collection>
+
+<h1>Collections</h1>
+
+<br />
+
+<table>
+    <thead>
+        <tr>
+            <th></th>
+            <th>Collection Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var collection in Model)
+        {
+            <tr>
+                <td>Image goes here...</td>
+                <td>@collection.Name</td>
+            </tr>
+        }
+    </tbody>
+</table>

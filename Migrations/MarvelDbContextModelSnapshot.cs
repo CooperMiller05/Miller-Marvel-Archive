@@ -110,6 +110,64 @@ namespace MarvelArchive.Migrations
                     b.ToTable("CharacterMedia");
                 });
 
+            modelBuilder.Entity("MarvelArchive.Models.Collection", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("isPublic")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Collections");
+                });
+
+            modelBuilder.Entity("MarvelArchive.Models.CollectionItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CharacterId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CollectionId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MediaId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CharacterId");
+
+                    b.HasIndex("CollectionId");
+
+                    b.HasIndex("MediaId");
+
+                    b.ToTable("CollectionItems");
+                });
+
             modelBuilder.Entity("MarvelArchive.Models.Media", b =>
                 {
                     b.Property<int>("Id")
@@ -195,6 +253,29 @@ namespace MarvelArchive.Migrations
                         .IsRequired();
 
                     b.Navigation("Character");
+
+                    b.Navigation("Media");
+                });
+
+            modelBuilder.Entity("MarvelArchive.Models.CollectionItem", b =>
+                {
+                    b.HasOne("MarvelArchive.Models.Character", "Character")
+                        .WithMany()
+                        .HasForeignKey("CharacterId");
+
+                    b.HasOne("MarvelArchive.Models.Collection", "Collection")
+                        .WithMany()
+                        .HasForeignKey("CollectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MarvelArchive.Models.Media", "Media")
+                        .WithMany()
+                        .HasForeignKey("MediaId");
+
+                    b.Navigation("Character");
+
+                    b.Navigation("Collection");
 
                     b.Navigation("Media");
                 });
