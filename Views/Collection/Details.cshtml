@@ -1,5 +1,24 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@model MarvelArchive.Models.Collection
+
+<h1>@Model.Name</h1>
+
+<p>@Model.Description</p>
+
+@if (!Model.CollectionItems.Any())
+{
+    <p>This collection is empty.</p>
+}
+else
+{
+    @foreach (var item in Model.CollectionItems)
+    {
+        @if (item.Character != null)
+        {
+            <p>@item.Character.HeroName</p>
+        }
+        else if (item.Media != null)
+        {
+            <p>@item.Media.Title</p>
+        }
+    }
 }

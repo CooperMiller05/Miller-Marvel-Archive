@@ -11,5 +11,7 @@ namespace MarvelArchive.Models
         public string? Description { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public bool isPublic { get; set; } = false;
+
+        public ICollection<CollectionItem> CollectionItems { get; set; } = new List<CollectionItem>();
     }
 }

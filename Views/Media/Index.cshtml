@@ -9,14 +9,16 @@
 <label>Search: </label>
 <input type="text" id="search" placeholder="Search Archive" />
 
-<br /><br />
+<br />
+<br />
 
 @if (User.IsInRole("Admin"))
 {
     <a asp-action="Create">+ Create New</a>
 }
 
-<br /><br />
+<br />
+<br />
 
 <table id="mediaTable">
     <thead>
@@ -40,7 +42,13 @@
                             <a asp-action="Edit" asp-route-id="@media.Id">Edit</a>
                             <a asp-action="Delete" asp-route-id="@media.Id">Delete</a>
                         }
-                        <a asp-controller="Collection" asp-action="AddItem" asp-route-id="@media.Id" asp-route-type="media" asp-route-collectionId="2">Add to Collection</a>
+
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <button type="button" class="btn btn-primary add-to-collection" data-media-id="@media.Id" data-item-type="media">
+                                Add to Collection
+                            </button>
+                        }
                     </td>
                 </tr>
             }
@@ -48,24 +56,26 @@
     </tbody>
 </table>
 
+@await Html.PartialAsync("_AddToCollectionDialog")
+
 <script>
-    const searchBox = document.getElementById("search");
-    const mediaList = document.getElementById("mediaList");
-    const mediaRows = mediaList.querySelectorAll("tr");
+        const searchBox = document.getElementById("search");
+        const mediaList = document.getElementById("mediaList");
+        const mediaRows = mediaList.querySelectorAll("tr");
 
-    searchBox.addEventListener("input", function() {
+        searchBox.addEventListener("input", function() {
 
-        const searchTerm = searchBox.value.toLowerCase();
+            const searchTerm = searchBox.value.toLowerCase();
 
-        for (const row of mediaRows) {
+            for (const row of mediaRows) {
 
-            const rowText = row.textContent.toLowerCase();
+                const rowText = row.textContent.toLowerCase();
 
-            if (rowText.includes(searchTerm)) {
-                row.style.display = "";
-            } else {
-                row.style.display = "none";
+                if (rowText.includes(searchTerm)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
             }
-        }
-    });
+        });
 </script>

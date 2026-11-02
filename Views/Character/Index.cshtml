@@ -76,20 +76,30 @@
                     <td>@character.RealName</td>
                     <td>@character.Aliases</td>
                     <td>@character.GetAlignmentValue()</td>
-                    @if (User.IsInRole("Admin"))
-                    {
                         <td>
+                        @if (User.IsInRole("Admin"))
+                        {
                             <a asp-action="Edit" asp-route-id="@character.Id">Edit</a>
-                        </td>
-                        <td>
                             <a asp-action="Delete" asp-route-id="@character.Id">Delete</a>
+                        }
+
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <button type="button"
+                                    class="btn btn-primary add-to-collection"
+                                    data-item-id="@character.Id"
+                                    data-item-type="character">
+                                Add to Collection
+                            </button>
+                        }
                         </td>
-                    }
                 </tr>
             }
         }
     </tbody>
 </table>
+
+@await Html.PartialAsync("_AddToCollectionDialog")
 
 
 @if (ViewBag.TotalPages > 1)
@@ -122,7 +132,6 @@
         }
     </div>
 }
-
 
 @*<script>
     const searchBox = document.getElementById("search");

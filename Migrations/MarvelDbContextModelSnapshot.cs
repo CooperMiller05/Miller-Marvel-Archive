@@ -264,7 +264,7 @@ namespace MarvelArchive.Migrations
                         .HasForeignKey("CharacterId");
 
                     b.HasOne("MarvelArchive.Models.Collection", "Collection")
-                        .WithMany()
+                        .WithMany("CollectionItems")
                         .HasForeignKey("CollectionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -283,6 +283,11 @@ namespace MarvelArchive.Migrations
             modelBuilder.Entity("MarvelArchive.Models.Character", b =>
                 {
                     b.Navigation("CharacterMedia");
+                });
+
+            modelBuilder.Entity("MarvelArchive.Models.Collection", b =>
+                {
+                    b.Navigation("CollectionItems");
                 });
 
             modelBuilder.Entity("MarvelArchive.Models.Media", b =>

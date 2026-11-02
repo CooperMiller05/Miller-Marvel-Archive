@@ -74,6 +74,18 @@
 </div>
 <br /><br />
 
+@if (User.Identity?.IsAuthenticated == true)
+{
+    <button type="button"
+            class="btn btn-primary add-to-collection"
+            data-item-id="@Model.Id"
+            data-item-type="character">
+        Add to Collection
+    </button>
+}
+
+@await Html.PartialAsync("_AddToCollectionDialog")
+
 @if (User.IsInRole("Admin"))
 {
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a>

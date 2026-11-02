@@ -1,0 +1,27 @@
+﻿
+<dialog id="collectionDialog"
+        data-collections-url="@Url.Action("GetMyCollections", "Collection")"
+        data-add-url="@Url.Action("AddItem", "Collection")">
+
+    <h3>Add to Collection</h3>
+
+    <form id="addToCollectionForm">
+        @Html.AntiForgeryToken()
+
+        <input type="hidden" id="selectedItemId" />
+        <input type="hidden" id="selectedItemType" />
+
+        <label for="collectionSelect">Choose a collection:</label>
+
+        <select id="collectionSelect" required>
+            <option value="">Loading collections...</option>
+        </select>
+
+        <p id="collectionMessage" role="status"></p>
+
+        <div>
+            <button type="button" id="closeDialog">Cancel</button>
+            <button type="submit" id="saveCollectionButton">Save</button>
+        </div>
+    </form>
+</dialog>
