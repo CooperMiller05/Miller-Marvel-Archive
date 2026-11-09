@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using MarvelArchive.ViewModels;
+using System.Diagnostics;
 
 namespace MarvelArchive.Controllers
 {
@@ -22,52 +24,93 @@ namespace MarvelArchive.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index(string? search, string alignment = "all", string sort = "atoz", int page  = 1)
+        public async Task<IActionResult> Index(string? search, string alignment = "all", string sort = "atoz", int page = 1)
         {
-            page = Math.Max(1, page);
             const int pageSize = 25;
 
-            var query = _context.Characters.AsNoTracking();
-
-            if (!User.IsInRole("Admin"))
-            {
-                query = query.Where(c => c.IsVisible);
-            }
+            var allCharacters = await _context.Characters.AsNoTracking().Select(c => new CharacterViewModel
+                {
+                    Id = c.Id,
+                    HeroName = c.HeroName,
+                    RealName = c.RealName,
+                    Aliases = c.Aliases,
+                    Alignment = c.Alignment,
+                    IsVisible = c.IsVisible
+                }).ToListAsync();
 
             if (!string.IsNullOrWhiteSpace(search))
             {
                 search = search.Trim();
 
-                query = query.Where(c => c.HeroName.Contains(search) || (c.RealName != null && c.RealName.Contains(search)) || (c.Aliases != null && c.Aliases.Contains(search)));
+                allCharacters = allCharacters.Where(c =>
+                        (c.HeroName?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                        (c.RealName?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                        (c.Aliases?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false)).ToList();
             }
 
             if (alignment == "good")
             {
-                query = query.Where(c => c.Alignment == "good");
-            } else if (alignment == "bad")
+                allCharacters = allCharacters.Where(c => c.Alignment == "good").ToList();
+            }
+            else if (alignment == "bad")
             {
-                query = query.Where(c => c.Alignment == "bad");
+                allCharacters = allCharacters.Where(c => c.Alignment == "bad").ToList();
             }
 
             if (sort == "ztoa")
             {
-                query = query.OrderByDescending(c => c.HeroName);
-            } else
+                allCharacters = allCharacters.OrderByDescending(c => c.HeroName).ToList();
+            }
+            else
             {
-                query = query.OrderBy(c => c.HeroName);
+                allCharacters = allCharacters.OrderBy(c => c.HeroName).ToList();
             }
 
-            int totalCharacters = await query.CountAsync();
+            int totalCharacters = allCharacters.Count;
 
-            var characters = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            int totalPages = (int)Math.Ceiling(totalCharacters / (double)pageSize);
+
+            page = Math.Max(1, page);
+            page = totalPages > 0 ? Math.Min(page, totalPages) : 1;
+
+            var characters = allCharacters.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
             ViewBag.Search = search;
             ViewBag.Alignment = alignment;
             ViewBag.Sort = sort;
             ViewBag.CurrentPage = page;
-            ViewBag.TotalPages = (int)Math.Ceiling(totalCharacters / (double)pageSize);
+            ViewBag.TotalPages = totalPages;
 
             return View(characters);
+        }
+
+        public async Task<IActionResult> SearchSuggestions(string term)
+        {
+            if (string.IsNullOrWhiteSpace(term) || term.Length < 2)
+            {
+                return Json(new List<object>());
+            }
+
+            var suggestions = await _context.Characters
+    .AsNoTracking()
+    .Where(c => c.IsVisible &&
+        (c.HeroName.Contains(term) ||
+         c.RealName.Contains(term) ||
+         c.Aliases.Contains(term)))
+    .OrderBy(c =>
+        c.HeroName.Contains(term) ? 0 :
+        c.RealName.Contains(term) ? 1 : 2)
+    .ThenBy(c => c.HeroName)
+    .Take(5)
+    .Select(c => new
+    {
+        c.Id,
+        c.HeroName,
+        c.RealName
+    })
+    .ToListAsync();
+
+            return Json(suggestions);
         }
 
         public async Task<IActionResult> Details(int? id)

@@ -4,11 +4,16 @@
 
 <br />
 
+<div>
+    <a class="btn btn-primary" asp-action="Create">Create a New Collection</a>
+</div>
+
 <table>
     <thead>
         <tr>
             <th></th>
             <th>Collection Name</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -16,7 +21,9 @@
         {
             <tr>
                 <td>Image goes here...</td>
-                <td><a class="nav-link text-dark" asp-action="Details" asp-route-id="@collection.Id">@collection.Name</a></td>
+                <td><a asp-action="Details" asp-route-id="@collection.Id">@collection.Name</a></td>
+                <td><a asp-action="Edit" asp-route-id="@collection.Id">Edit</a></td>
+                <td><a asp-action="Delete" asp-route-id="@collection.Id">Delete</a></td>
             </tr>
         }
     </tbody>

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MarvelArchive.Models.Character>
+﻿@model IEnumerable<MarvelArchive.ViewModels.CharacterViewModel>
 @{
     ViewData["Title"] = "Characters";
 }
@@ -11,8 +11,11 @@
 
     <br />
 
-    <input type="search" id="search" name="search" value="@ViewBag.Search" placeholder="Search Characters" />
-    <button type="submit">Search</button>
+    <div class="search-container">
+        <input type="search" id="search" name="search" value="@ViewBag.Search" placeholder="Search Characters" autocomplete="off" />
+
+        <div id="searchSuggestions" class="search-suggestions"></div>
+    </div>
 
     <br />
 
@@ -45,16 +48,21 @@
             Z - A
         </option>
     </select>
+
+    <button type="submit">Search</button>
+    <button type="reset">Reset</button>
 </form>
 
-<br /><br />
+<br />
+<br />
 
 @if (User.IsInRole("Admin"))
 {
     <a asp-action="Create">+ Create New</a>
 }
 
-<br /><br />
+<br />
+<br />
 
 <table id="characterTable">
     <thead>
@@ -75,8 +83,10 @@
                     <td><a asp-action="Details" asp-route-id="@character.Id">@character.HeroName</a></td>
                     <td>@character.RealName</td>
                     <td>@character.Aliases</td>
-                    <td>@character.GetAlignmentValue()</td>
-                        <td>
+                    <td>
+                        @(character.Alignment == "good" ? "Super Hero" : character.Alignment == "bad" ? "Villain" : "Unknown")
+                    </td>
+                    <td>
                         @if (User.IsInRole("Admin"))
                         {
                             <a asp-action="Edit" asp-route-id="@character.Id">Edit</a>
@@ -92,7 +102,7 @@
                                 Add to Collection
                             </button>
                         }
-                        </td>
+                    </td>
                 </tr>
             }
         }
@@ -133,28 +143,63 @@
     </div>
 }
 
-@*<script>
-    const searchBox = document.getElementById("search");
-    const characterList = document.getElementById("characterList");
-    const characterRows = characterList.querySelectorAll("tr");
+<script>
+    const searchInput = document.getElementById("search");
+    const suggestionsContainer = document.getElementById("searchSuggestions");
 
-    searchBox.addEventListener("input", function() {
+    const suggestionsUrl = '@Url.Action("SearchSuggestions", "Character")';
+    const detailsUrl = '@Url.Action("Details", "Character")';
 
-        const searchTerm = searchBox.value.toLowerCase();
+    searchInput.addEventListener("input", function () {
 
-        for (const row of characterRows) {
+        const searchTerm = searchInput.value.trim();
 
-            const rowText = row.textContent.toLowerCase();
-
-            if (rowText.includes(searchTerm)) {
-                row.style.display = "";
-            } else {
-                row.style.display = "none";
-            }
+        if (searchTerm.length < 2) {
+            suggestionsContainer.innerHTML = "";
+            suggestionsContainer.style.display = "none";
+            return;
         }
+
+        const url = `${suggestionsUrl}?term=${encodeURIComponent(searchTerm)}`;
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error: ${response.status}`);
+                }
+
+                return response.json();
+            }).then(data => {
+
+                suggestionsContainer.innerHTML = "";
+
+                if (data.length === 0) {
+                    suggestionsContainer.style.display = "none";
+                    return;
+                }
+
+                data.forEach(character => {
+
+                    const suggestion = document.createElement("a");
+
+                    suggestion.classList.add("search-suggestion");
+                    suggestion.href = `${detailsUrl}/${character.id}`;
+
+                    const heroName = document.createElement("strong");
+                    heroName.textContent = character.heroName;
+
+                    const realName = document.createElement("span");
+                    realName.textContent = ` (${character.realName})`;
+
+                    suggestion.appendChild(heroName);
+                    suggestion.appendChild(realName);
+
+                    suggestionsContainer.appendChild(suggestion);
+                });
+
+                suggestionsContainer.style.display = "block";
+            }).catch(error => {
+                console.error("Search request failed:", error);
+            });
     });
-
-    const searchAlignment = document.getElementById("searchAlignment");
-    const sort = document.getElementById("sort");
-
-</script>*@
+</script>

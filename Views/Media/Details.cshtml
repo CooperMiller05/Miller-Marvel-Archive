@@ -41,3 +41,23 @@
 }
 
 <a asp-action="Index">Back to List</a>
+
+<h3>Character Appearances</h3>
+
+@if (Model.CharacterMedia.Any())
+{
+    <ul>
+        @foreach (var cm in Model.CharacterMedia)
+        {
+            <div>
+                <img src="@cm.Character.HeroName" width="200" />
+                <br />
+                <p>@cm.Character.GetType()</p>
+            </div>
+        }
+    </ul>
+}
+else
+{
+    <p>No Character Appearances</p>
+}

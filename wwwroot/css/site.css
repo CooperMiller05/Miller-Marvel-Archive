@@ -20,3 +20,33 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.search-container {
+    position: relative;
+    width: 100%;
+}
+
+.search-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    z-index: 1000;
+    display: none;
+}
+
+.search-suggestion {
+    display: block;
+    padding: 10px 12px;
+    color: #222;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+    .search-suggestion:hover {
+        background-color: #f0f0f0;
+    }
