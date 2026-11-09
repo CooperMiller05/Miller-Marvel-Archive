@@ -1,6 +1,7 @@
 ﻿using MarvelArchive.Data;
 using MarvelArchive.Models;
 using MarvelArchive.Services;
+using MarvelArchive.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,16 +19,79 @@ namespace MarvelArchive.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? search, string type = "all", string sort = "atoz", int page = 1)
         {
-            var media = await _context.Media.ToListAsync();
+            const int pageSize = 25;
 
-            if (!User.IsInRole("Admin"))
+            var allMedia = await _context.Media.AsNoTracking().Select(m => new MediaViewModel
             {
-                media = media.Where(m => m.IsVisible).ToList();
+                Id = m.Id,
+                Type = m.Type,
+                Title = m.Title,
+                Description = m.Description,
+                IsVisible = m.IsVisible
+            }).ToListAsync();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                search = search.Trim();
+
+                allMedia = allMedia.Where(m =>
+                        (m.Title?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                        (m.Description?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false)).ToList();
             }
 
+            if (type == "movie")
+            {
+                allMedia = allMedia.Where(m => m.Type == "movie").ToList();
+            }
+            else if (type == "tvshow")
+            {
+                allMedia = allMedia.Where(c => c.Type == "tvshow").ToList();
+            }
+
+            if (sort == "ztoa")
+            {
+                allMedia = allMedia.OrderByDescending(m => m.Title).ToList();
+            }
+            else
+            {
+                allMedia = allMedia.OrderBy(m => m.Title).ToList();
+            }
+
+            int totalMedia = allMedia.Count;
+
+            int totalPages = (int)Math.Ceiling(totalMedia / (double)pageSize);
+
+            page = Math.Max(1, page);
+            page = totalPages > 0 ? Math.Min(page, totalPages) : 1;
+
+            var media = allMedia.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            ViewBag.Search = search;
+            ViewBag.Type = type;
+            ViewBag.Sort = sort;
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+
             return View(media);
+        }
+
+        public async Task<IActionResult> SearchSuggestions(string term)
+        {
+            if (string.IsNullOrWhiteSpace(term) || term.Length < 2)
+            {
+                return Json(new List<object>());
+            }
+
+            var suggestions = await _context.Media.AsNoTracking().Where(m => m.IsVisible && m.Title.Contains(term)).OrderBy(m => m.Title).Take(5).Select(m => new
+            {
+                m.Id,
+                m.Title,
+                m.Type
+            }).ToListAsync();
+
+            return Json(suggestions);
         }
 
         public async Task<IActionResult> Details(int id)
@@ -62,7 +126,7 @@ namespace MarvelArchive.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> Edit (Media media)
+        public async Task<IActionResult> Edit(Media media)
         {
             var existingMedia = await _context.Media.FirstOrDefaultAsync(m => m.Id == media.Id);
 
@@ -96,7 +160,7 @@ namespace MarvelArchive.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Delete (int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var media = await _context.Media.FirstOrDefaultAsync(m => m.Id == id);
 
@@ -105,7 +169,7 @@ namespace MarvelArchive.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> Delete (Media media)
+        public async Task<IActionResult> Delete(Media media)
         {
             var existingMedia = await _context.Media.FirstOrDefaultAsync(m => m.Id == media.Id);
 
@@ -121,14 +185,14 @@ namespace MarvelArchive.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        public IActionResult Create ()
+        public IActionResult Create()
         {
             return View();
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> Create (Media media)
+        public async Task<IActionResult> Create(Media media)
         {
             _context.Media.Add(media);
             await _context.SaveChangesAsync();

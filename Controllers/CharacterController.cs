@@ -29,14 +29,14 @@ namespace MarvelArchive.Controllers
             const int pageSize = 25;
 
             var allCharacters = await _context.Characters.AsNoTracking().Select(c => new CharacterViewModel
-                {
-                    Id = c.Id,
-                    HeroName = c.HeroName,
-                    RealName = c.RealName,
-                    Aliases = c.Aliases,
-                    Alignment = c.Alignment,
-                    IsVisible = c.IsVisible
-                }).ToListAsync();
+            {
+                Id = c.Id,
+                HeroName = c.HeroName,
+                RealName = c.RealName,
+                Aliases = c.Aliases,
+                Alignment = c.Alignment,
+                IsVisible = c.IsVisible
+            }).ToListAsync();
 
             if (!string.IsNullOrWhiteSpace(search))
             {
@@ -91,24 +91,17 @@ namespace MarvelArchive.Controllers
                 return Json(new List<object>());
             }
 
-            var suggestions = await _context.Characters
-    .AsNoTracking()
-    .Where(c => c.IsVisible &&
-        (c.HeroName.Contains(term) ||
-         c.RealName.Contains(term) ||
-         c.Aliases.Contains(term)))
-    .OrderBy(c =>
-        c.HeroName.Contains(term) ? 0 :
-        c.RealName.Contains(term) ? 1 : 2)
-    .ThenBy(c => c.HeroName)
-    .Take(5)
-    .Select(c => new
-    {
-        c.Id,
-        c.HeroName,
-        c.RealName
-    })
-    .ToListAsync();
+            var suggestions = await _context.Characters.AsNoTracking().Where(c => c.IsVisible &&
+                (c.HeroName.Contains(term) ||
+                c.RealName.Contains(term) ||
+                c.Aliases.Contains(term))).OrderBy(c =>
+                c.HeroName.Contains(term) ? 0 :
+                c.RealName.Contains(term) ? 1 : 2).ThenBy(c => c.HeroName).Take(5).Select(c => new
+                {
+                    c.Id,
+                    c.HeroName,
+                    c.RealName
+                }).ToListAsync();
 
             return Json(suggestions);
         }
@@ -213,7 +206,7 @@ namespace MarvelArchive.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> Create (Character character)
+        public async Task<IActionResult> Create(Character character)
         {
             _context.Characters.Add(character);
             await _context.SaveChangesAsync();

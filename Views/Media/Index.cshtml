@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MarvelArchive.Models.Media>
+﻿@model IEnumerable<MarvelArchive.ViewModels.MediaViewModel>
 @{
     ViewData["Title"] = "Media";
 }
@@ -6,8 +6,52 @@
 <h1>Marvel Movies/TV Shows</h1>
 <br />
 
-<label>Search: </label>
-<input type="text" id="search" placeholder="Search Archive" />
+<form asp-action="Index">
+    <label>Search:</label>
+
+    <br />
+
+    <div class="search-container">
+        <input type="search" id="search" name="search" value="@ViewBag.Search" placeholder="Search Media" autocomplete="off" />
+
+        <div id="searchSuggestions" class="search-suggestions"></div>
+    </div>
+
+    <br />
+
+    <label>Type:</label>
+    <select id="type" name="type">
+        <option value="all"
+                selected="@(ViewBag.Type == "all" ? "selected" : null)">
+            All
+        </option>
+        <option value="movie"
+                selected="@(ViewBag.Type == "movie" ? "selected" : null)">
+            Movies
+        </option>
+        <option value="tvshow"
+                selected="@(ViewBag.Type == "tvshow" ? "selected" : null)">
+            Tv Shows
+        </option>
+    </select>
+
+    <br />
+
+    <label>Sort:</label>
+    <select id="sort" name="sort" class="form-select">
+        <option value="atoz"
+                selected="@(ViewBag.SortOrder == "atoz" ? "selected" : null)">
+            A - Z
+        </option>
+        <option value="ztoa"
+                selected="@(ViewBag.SortOrder == "ztoa" ? "selected" : null)">
+            Z - A
+        </option>
+    </select>
+
+    <button type="submit">Search</button>
+    <button type="reset">Reset</button>
+</form>
 
 <br />
 <br />
@@ -58,24 +102,94 @@
 
 @await Html.PartialAsync("_AddToCollectionDialog")
 
+@if (ViewBag.TotalPages > 1)
+{
+    <div class="mt-3">
+        @if (ViewBag.CurrentPage > 1)
+        {
+            <a asp-action="Index"
+               asp-route-searchTerm="@ViewBag.SearchTerm"
+               asp-route-type="@ViewBag.Type"
+               asp-route-sortOrder="@ViewBag.SortOrder"
+               asp-route-page="@(ViewBag.CurrentPage - 1)">
+                Previous
+            </a>
+        }
+
+        <span class="mx-2">
+            Page @ViewBag.CurrentPage of @ViewBag.TotalPages
+        </span>
+
+        @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+        {
+            <a asp-action="Index"
+               asp-route-search="@ViewBag.Search"
+               asp-route-type="@ViewBag.Type"
+               asp-route-sort="@ViewBag.Sort"
+               asp-route-page="@(ViewBag.CurrentPage + 1)">
+                Next
+            </a>
+        }
+    </div>
+}
+
 <script>
-        const searchBox = document.getElementById("search");
-        const mediaList = document.getElementById("mediaList");
-        const mediaRows = mediaList.querySelectorAll("tr");
+    const searchInput = document.getElementById("search");
+    const suggestionsContainer = document.getElementById("searchSuggestions");
 
-        searchBox.addEventListener("input", function() {
+    const suggestionsUrl = '@Url.Action("SearchSuggestions", "Media")';
+    const detailsUrl = '@Url.Action("Details", "Media")';
 
-            const searchTerm = searchBox.value.toLowerCase();
+    searchInput.addEventListener("input", function () {
 
-            for (const row of mediaRows) {
+        const searchTerm = searchInput.value.trim();
 
-                const rowText = row.textContent.toLowerCase();
+        if (searchTerm.length < 2) {
+            suggestionsContainer.innerHTML = "";
+            suggestionsContainer.style.display = "none";
+            return;
+        }
 
-                if (rowText.includes(searchTerm)) {
-                    row.style.display = "";
-                } else {
-                    row.style.display = "none";
+        const url = `${suggestionsUrl}?term=${encodeURIComponent(searchTerm)}`;
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error: ${response.status}`);
                 }
-            }
-        });
+
+                return response.json();
+            }).then(data => {
+
+                suggestionsContainer.innerHTML = "";
+
+                if (data.length === 0) {
+                    suggestionsContainer.style.display = "none";
+                    return;
+                }
+
+                data.forEach(media => {
+
+                    const suggestion = document.createElement("a");
+
+                    suggestion.classList.add("search-suggestion");
+                    suggestion.href = `${detailsUrl}/${media.id}`;
+
+                    const title = document.createElement("strong");
+                    title.textContent = media.title;
+
+                    const type = document.createElement("span");
+                    type.textContent = ` (${media.type})`;
+
+                    suggestion.appendChild(title);
+                    suggestion.appendChild(type);
+
+                    suggestionsContainer.appendChild(suggestion);
+                });
+
+                suggestionsContainer.style.display = "block";
+            }).catch(error => {
+                console.error("Search request failed:", error);
+            });
+    });
 </script>
