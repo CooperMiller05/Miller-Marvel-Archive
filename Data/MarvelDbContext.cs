@@ -25,5 +25,8 @@ namespace MarvelArchive.Data
         public DbSet<Collection> Collections { get; set; }
 
         public DbSet<CollectionItem> CollectionItems { get; set; }
+
+        public DbSet<ComicIssue> ComicIssues { get; set; }
+        public DbSet<ComicSeries> ComicSeries { get; set; }
     }
 }

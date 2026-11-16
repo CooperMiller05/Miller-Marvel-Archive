@@ -168,6 +168,70 @@ namespace MarvelArchive.Migrations
                     b.ToTable("CollectionItems");
                 });
 
+            modelBuilder.Entity("MarvelArchive.Models.ComicIssue", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("ComicSeriesId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Creators")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("IssueNumber")
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly>("ReleaseDate")
+                        .HasColumnType("date");
+
+                    b.Property<int?>("SeriesId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ComicSeriesId");
+
+                    b.ToTable("ComicIssues");
+                });
+
+            modelBuilder.Entity("MarvelArchive.Models.ComicSeries", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ComicSeries");
+                });
+
             modelBuilder.Entity("MarvelArchive.Models.Media", b =>
                 {
                     b.Property<int>("Id")
@@ -280,6 +344,13 @@ namespace MarvelArchive.Migrations
                     b.Navigation("Media");
                 });
 
+            modelBuilder.Entity("MarvelArchive.Models.ComicIssue", b =>
+                {
+                    b.HasOne("MarvelArchive.Models.ComicSeries", null)
+                        .WithMany("ComicIssues")
+                        .HasForeignKey("ComicSeriesId");
+                });
+
             modelBuilder.Entity("MarvelArchive.Models.Character", b =>
                 {
                     b.Navigation("CharacterMedia");
@@ -288,6 +359,11 @@ namespace MarvelArchive.Migrations
             modelBuilder.Entity("MarvelArchive.Models.Collection", b =>
                 {
                     b.Navigation("CollectionItems");
+                });
+
+            modelBuilder.Entity("MarvelArchive.Models.ComicSeries", b =>
+                {
+                    b.Navigation("ComicIssues");
                 });
 
             modelBuilder.Entity("MarvelArchive.Models.Media", b =>
